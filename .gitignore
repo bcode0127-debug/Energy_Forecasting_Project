@@ -1,0 +1,19 @@
+# Python environment
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Data (Protect your large files)
+data/*.csv
+data/*.zip
+
+# System files
+.DS_Store
+.vscode/
+.env
+
+# Distribution / builds
+dist/
+build/
+*.egg-info/
