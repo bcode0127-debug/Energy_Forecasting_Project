@@ -1,26 +1,33 @@
 from data.ingestion import load_raw_data
 from data.preprocessing import clean_and_interpolation
+from features.lag_features import build_lag_features
 from features.time_features import build_time_features
 from features.weather_features import build_weather_features
 
 def run_pipeline():
-    print("-- starting energy forcasting pipeline --")
-
-    # Ingestion
-    raw_data = load_raw_data("lcl_merged_data.csv")
-
-    # Preprocessing
-    clean_data = clean_and_interpolation(raw_data)
+    print("--- Starting Energy Forecasting Pipeline ---")
     
-    # feature engineering
-    df = build_time_features(clean_data)
-    df = build_weather_features(df) # <-- Add Weather Features
-
-    # print's
+    # 1. Ingestion & Preprocessing
+    df = load_raw_data("lcl_merged_data.csv")
+    df = clean_and_interpolation(df)
+    
+    # 2. Feature Engineering
+    df = build_time_features(df)
+    df = build_weather_features(df)
+    
+    # IMPORTANT: Re-assign the result of the function back to 'df'
+    df = build_lag_features(df) 
+    
     print("--- Feature Engineering Complete ---")
-    print(f"Final Column Count: {len(df.columns)}")
-    print(df[['temp', 'HDD', 'CDD']].head())
+    print(f"Final Dataset Shape: {df.shape}")
     
+    # Check if columns exist before printing to avoid the KeyError
+    cols_to_show = ['mean_consumption', 'lag_30m', 'lag_24h']
+    if all(c in df.columns for c in cols_to_show):
+        print(df[cols_to_show].head())
+    else:
+        print("Error: Lag columns were not found in the final dataframe!")
 
 if __name__ == "__main__":
     run_pipeline()
+
