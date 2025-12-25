@@ -11,6 +11,7 @@ from models.baselines import save_results_json
 from features.weather_features import weather_interactions
 from evaluation.diagnostics import plot_diagnostic_results
 from features.weather_features import centered_interactions
+from features.time_features import fourier_features
 import pandas as pd
 
 def run_pipeline():
@@ -24,6 +25,9 @@ def run_pipeline():
 
     print("Adding Interaction Terms (Temp x Hour)...")
     df = weather_interactions(df)
+
+    print("Expanding Temporal Features with 3 Harmonics...")
+    df = fourier_features(df, harmonics=3)
 
     df = centered_interactions(df)
     
@@ -74,19 +78,16 @@ def run_pipeline():
     # Evaluation & Plotting
     y_pred = model.predict(X_test)
 
-   # --- THE PROFESSOR'S FIX ---
     diagnostic_df = pd.DataFrame({
         'actual': y_test, 
         'predicted': y_pred
     })
     # This line solves the KeyError
     diagnostic_df['error'] = diagnostic_df['actual'] - diagnostic_df['predicted']
-    # ---------------------------
 
     # Now run your audit/evaluation functions using this new df
     model_rmse, naive_rmse, improvement = evaluate_trustworthiness(y_test, y_pred, df_test)
     
-    # NEW: Run the Diagnostic Plots (Workflow Section 9)
     # This fulfills the "ACF" and "Fan Shape" requirements
     plot_diagnostic_results(diagnostic_df)
     

@@ -29,11 +29,7 @@ def weather_interactions(df):
     return df 
 
 def centered_interactions(df):
-    """
-    Workflow Section 5.3: Implements Mean Centering for Interactions.
-    Reduces multicollinearity to help the Elastic Net identify 
-    the true impact of weather at specific times of day.
-    """
+    
     df = df.copy()
     
     # 1. Calculate means from a fixed training window (Reference: Workflow 7.1)
