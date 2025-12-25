@@ -18,11 +18,12 @@ def weather_interactions(df):
     # Capturing non-linear energy sensitivity by multiplying weather features with time features
     df = df.copy()
 
-    # Interaction: Temp * hour
-    df['temp_hour_sin'] = df['temp'] * df['hour_sin']
-    df['temp_hour_cos'] = df['temp'] * df['hour_cos']
-
-    # Interaction: Humidity * Season
-    df['humidity_seasonal'] = df['humidity'] * df['month_sin']
+    # 1. Calculate the Means
+    temp_mean = df['temp'].mean()
+    h_sin_mean = df['hour_sin'].mean()
+    
+    # 2. Create the Interaction using centered values
+    # Formula: (A - mean_A) * (B - mean_B)
+    df['temp_hour_interaction'] = (df['temp'] - temp_mean) * (df['hour_sin'] - h_sin_mean)
 
     return df 
