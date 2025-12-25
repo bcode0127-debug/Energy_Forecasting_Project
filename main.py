@@ -7,7 +7,9 @@ from features.lag_features import build_lag_features
 from models.baselines import prepare_model_data
 from models.linear_models import train_elastic_net
 from models.baselines import prepare_model_data, evaluate_trustworthiness
+from models.baselines import save_results_json
 import pandas as pd
+
 def run_pipeline():
     # 1. Data Preparation
     df = load_raw_data("lcl_merged_data.csv")
@@ -29,7 +31,7 @@ def run_pipeline():
     print(f"Best L1 Ratio (Sparsity): {model.l1_ratio_:.2f}")
     
     y_pred = model.predict(X_test) 
-    
+
     # 5. Evaluation & Naive Comparison
     # Note: We need the unscaled test dataframe to get the naive baseline values
     split_idx = int(len(df) * 0.8)
@@ -50,8 +52,16 @@ def run_pipeline():
     print("\nTop 5 Influential Features:")
     print(importance.abs().sort_values(ascending=False).head(5))
 
+    # 7. SAVE NUMERICAL RESULTS
+    metrics_dict = {
+        "model_rmse": round(model_rmse, 6),
+        "naive_rmse": round(naive_rmse, 6),
+        "improvement_percent": round(improvement, 2)
+    }
     
-    
+    # Save to the folder you created
+    save_results_json(metrics_dict, importance.head(10))
+
     # Evaluation & Plotting
     y_pred = model.predict(X_test)
     

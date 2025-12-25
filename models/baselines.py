@@ -2,6 +2,8 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 from sklearn.metrics import mean_squared_error
+import json
+import os
 
 def prepare_model_data(df, target_col='target_day_ahead', test_size = 0.2):
 
@@ -42,3 +44,24 @@ def evaluate_trustworthiness(y_test, y_pred, df_test):
     improvement = ((naive_rmse - model_rmse) / naive_rmse) * 100
     
     return model_rmse, naive_rmse, improvement
+
+def save_results_json(metrics, feature_importance, folder='results'):
+    """
+    Saves the performance metrics and feature importance to a JSON file.
+    """
+    # Ensure the folder exists
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        
+    # Prepare the data structure
+    results_data = {
+        "metrics": metrics,
+        "top_features": feature_importance.to_dict()
+    }
+    
+    file_path = os.path.join(folder, 'baseline_results.json')
+    
+    with open(file_path, 'w') as f:
+        json.dump(results_data, f, indent=4)
+    
+    print(f"✅ Results successfully saved to {file_path}")
