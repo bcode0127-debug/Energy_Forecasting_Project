@@ -8,6 +8,7 @@ from models.baselines import prepare_model_data
 from models.linear_models import train_elastic_net
 from models.baselines import prepare_model_data, evaluate_trustworthiness
 from models.baselines import save_results_json
+from features.weather_features import weather_interactions
 import pandas as pd
 
 def run_pipeline():
@@ -18,6 +19,10 @@ def run_pipeline():
     # 2. Feature Engineering & Target Shifting
     df = build_time_features(df)
     df = build_weather_features(df)
+
+    print("Adding Interaction Terms (Temp x Hour)...")
+    df = weather_interactions(df)
+
     df = build_lag_features(df) # Handles the -48 target shift and dropna()
     
     # 3. Responsible Splitting & Scaling
