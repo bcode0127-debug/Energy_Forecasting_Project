@@ -22,3 +22,17 @@ def build_time_features(df):
     df['is_weekend'] = df.index.dayofweek.map(lambda x: 1 if x >= 5 else 0)
 
     return df
+
+
+def fourier_features(df, harmonics=3):
+    
+    df = df.copy()
+    # Convert time to a continuous 24-hour decimal
+    hour_decimal = df.index.hour + df.index.minute / 60.0
+    
+    for i in range(1, harmonics + 1):
+        # The 24-hour cycle is our base frequency
+        df[f'fourier_sin_{i}'] = np.sin(2 * np.pi * i * hour_decimal / 24)
+        df[f'fourier_cos_{i}'] = np.cos(2 * np.pi * i * hour_decimal / 24)
+        
+    return df
