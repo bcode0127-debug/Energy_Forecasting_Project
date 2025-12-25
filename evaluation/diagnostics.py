@@ -38,7 +38,7 @@ def run_audit(y_actual, y_pred, df_test, output_path="results/figures/"):
     print("      PROFESSOR'S DIAGNOSTIC REPORT")
     print("="*40)
     print(f"3AM - 6AM RMSE (Night):   {night_rmse:.6f}")
-    print(f"6PM - 9PM RMSE (Evening): {evening_rmse:.6f}")
+    print(f"6PM - 9PM RMSE (Evening): {evng_rmse:.6f}")
     print("-" * 40)
     
     # Logic check for the Professor
