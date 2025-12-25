@@ -1,0 +1,17 @@
+[
+    {"Model Type":"Naive Baseline",
+    "RMSE":0.0358928031,
+    "Improvement (%)":0.0,
+    "Trust Status":"Low (Bias)"},
+    
+    {"Model Type":"Elastic Net (Linear)",
+    "RMSE":0.033194,
+    "Improvement (%)":7.52,
+    "Trust Status":"Medium (Interpretability)"},
+    
+    {"Model Type":"GBR (Ensemble)",
+    "RMSE":0.030681,
+    "Improvement (%)":14.52,
+    "Trust Status":"High (Accuracy)"}
+
+]
