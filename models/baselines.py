@@ -32,23 +32,20 @@ def prepare_model_data(df, target_col='target_day_ahead', test_size = 0.2):
 
 
 def evaluate_trustworthiness(y_test, y_pred, df_test):
-    # 1. Calculate Model RMSE
+    # Calculate Model RMSE
     model_rmse = np.sqrt(mean_squared_error(y_test, y_pred))
     
-    # 2. Calculate Naive Persistence RMSE (Predicting T+48 using T)
-    # Note: In our shifted DF, 'mean_consumption' is the value at time T
+    # Calculate Naive Persistence RMSE (Predicting T+48 using T)
     naive_preds = df_test['mean_consumption'] 
     naive_rmse = np.sqrt(mean_squared_error(y_test, naive_preds))
     
-    # 3. Calculate Improvement %
+    # Calculate Improvement 
     improvement = ((naive_rmse - model_rmse) / naive_rmse) * 100
     
     return model_rmse, naive_rmse, improvement
 
 def save_results_json(metrics, feature_importance, folder='results'):
-    """
-    Saves the performance metrics and feature importance to a JSON file.
-    """
+
     # Ensure the folder exists
     if not os.path.exists(folder):
         os.makedirs(folder)
@@ -64,4 +61,4 @@ def save_results_json(metrics, feature_importance, folder='results'):
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
     
-    print(f"✅ Results successfully saved to {file_path}")
+    print(f"Results successfully saved to {file_path}")
