@@ -27,3 +27,25 @@ def weather_interactions(df):
     df['temp_hour_interaction'] = (df['temp'] - temp_mean) * (df['hour_sin'] - h_sin_mean)
 
     return df 
+
+def centered_interactions(df):
+    """
+    Workflow Section 5.3: Implements Mean Centering for Interactions.
+    Reduces multicollinearity to help the Elastic Net identify 
+    the true impact of weather at specific times of day.
+    """
+    df = df.copy()
+    
+    # 1. Calculate means from a fixed training window (Reference: Workflow 7.1)
+    # Note: Adjust the date range to match your training period
+    temp_mean = 11.5  # Typical London mean, or use df['temp'].mean() from train set
+    
+    # 2. Center the temperature
+    df['temp_centered'] = df['temp'] - temp_mean
+    
+    # 3. Create the orthogonal interaction terms
+    # This specifically addresses the 'Fan Shape' by capturing time-of-day sensitivity
+    df['temp_hour_interaction_sin'] = df['temp_centered'] * df['hour_sin']
+    df['temp_hour_interaction_cos'] = df['temp_centered'] * df['hour_cos']
+    
+    return df

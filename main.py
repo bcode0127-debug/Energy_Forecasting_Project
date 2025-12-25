@@ -10,6 +10,7 @@ from models.baselines import prepare_model_data, evaluate_trustworthiness
 from models.baselines import save_results_json
 from features.weather_features import weather_interactions
 from evaluation.diagnostics import plot_diagnostic_results
+from features.weather_features import centered_interactions
 import pandas as pd
 
 def run_pipeline():
@@ -24,6 +25,8 @@ def run_pipeline():
     print("Adding Interaction Terms (Temp x Hour)...")
     df = weather_interactions(df)
 
+    df = centered_interactions(df)
+    
     df = build_lag_features(df) # Handles the -48 target shift and dropna()
     
     # 3. Responsible Splitting & Scaling
