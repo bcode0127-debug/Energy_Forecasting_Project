@@ -5,7 +5,7 @@ def build_weather_features(df, base_temp_h = 18, base_temp_c=22):
     # Creating heat and cool degree day features
     df = df.copy()
 
-    # Headting feature
+    # Heating feature
     df['HDD'] = (base_temp_h - df['temp'].clip(lower=0))
 
     # Cooling feature
@@ -23,7 +23,6 @@ def weather_interactions(df):
     h_sin_mean = df['hour_sin'].mean()
     
     # Create the Interaction using centered values
-    # Formula: (A - mean_A) * (B - mean_B)
     df['temp_hour_interaction'] = (df['temp'] - temp_mean) * (df['hour_sin'] - h_sin_mean)
 
     return df 
@@ -33,7 +32,7 @@ def centered_interactions(df):
     df = df.copy()
     
     # Calculate means from a fixed training window 
-    # Note: Adjust the date range to match your training period
+    # Note: Adjust the date range to match training period
     temp_mean = 11.5  
     
     # Center the temperature
