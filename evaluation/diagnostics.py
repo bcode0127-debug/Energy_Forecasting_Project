@@ -54,13 +54,13 @@ def plot_diagnostic_results(diag_df):
     # Residual Plot 
     ax1.scatter(diag_df['predicted'], diag_df['error'], alpha=0.1)
     ax1.axhline(0, color='red', linestyle='--')
-    ax1.set_title("Residuals vs Predicted (Check for Fan Shape)")
+    ax1.set_title("Residuals vs Predicted")
     ax1.set_xlabel("Predicted Energy")
     ax1.set_ylabel("Error")
     
     # ACF Plot 
     plot_acf(diag_df['error'], lags=60, ax=ax2)
-    ax2.set_title("Autocorrelation of Errors (Check for Spike at 48)")
+    ax2.set_title("Autocorrelation of Errors")
     
     plt.tight_layout()
     plt.show()

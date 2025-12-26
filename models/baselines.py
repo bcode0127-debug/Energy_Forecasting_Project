@@ -35,7 +35,7 @@ def evaluate_trustworthiness(y_test, y_pred, df_test):
     # Calculate Model RMSE
     model_rmse = np.sqrt(mean_squared_error(y_test, y_pred))
     
-    # Calculate Naive Persistence RMSE (Predicting T+48 using T)
+    # Calculate Naive Persistence RMSE 
     naive_preds = df_test['mean_consumption'] 
     naive_rmse = np.sqrt(mean_squared_error(y_test, naive_preds))
     
@@ -46,7 +46,6 @@ def evaluate_trustworthiness(y_test, y_pred, df_test):
 
 def save_results_json(metrics, feature_importance, folder='results'):
 
-    # Ensure the folder exists
     if not os.path.exists(folder):
         os.makedirs(folder)
         
