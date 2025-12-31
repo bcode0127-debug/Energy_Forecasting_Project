@@ -1,61 +1,116 @@
 # Energy Consumption Forecasting: Breaking the Linear Barrier
 
-## Project Overview
-This study illustrates a thorough, research-driven methodology for forecasting short-term energy consumption for the London Grid. By designing a cloud-native ETL pipeline utilizing Google BigQuery and Compute Engine, I effectively transformed and analyzed 167 million records. The research highlighted the importance of **Trustworthy AI** and **Explainability**, leading to a **14.52% improvement** in predictive accuracy by progressing from a **Naive Persistence Baseline** to an **Interpretable Linear Model**, and ultimately to a **Non-Linear Ensemble**.
+## Overview
 
-## Key Results
-* **Final Improvement:** 14.52% above the Naive Baseline.
-* **Linear Frontier:** Achieved a 7.52% improvement with Elastic Net before encountering structural constraints.
-* **Ensemble Breakthrough:** Successfully applied Gradient Boosting to capture non-linear household energy peaks.
+End-to-end machine learning pipeline for short-term energy consumption forecasting using 167 million smart meter records from the London Grid. Achieves 14.52% improvement over naive baseline through cloud-native data engineering on Google Cloud Platform and systematic feature engineering.
 
----
+## Results
 
-## Technical Workflow
-### 1. Cloud-Native Data Engineering (GCP) 
-The basis of this project was the design of a scalable ETL pipeline on the **Google Cloud Platform (GCP)** to accommodate 167 million smart-meter records.  
+| Model | Configuration | RMSE | Improvement |
+|-------|--------------|------|-------------|
+| Naive Baseline | N/A | 0.0358 | - |
+| Elastic Net (initial) | lag_30m, lag_24h | 0.0332 | +7.52% |
+| Elastic Net (current) | lag_48h, lag_96h | 0.0365 | -1.72% |
+| Gradient Boosting (initial) | lag_30m, lag_24h | 0.0306 | +14.52% |
+| Gradient Boosting (current) | lag_48h, lag_96h | 0.0325 | +9.56% |
 
-* **Infrastructure Orchestration:** Set up a **Google Compute Engine (VM)** instance to act as the primary node for managing data movement and executing processing scripts in the cloud. * **Distributed SQL Transformation:** Performed high-efficiency joins and temporal aggregations directly within **Google BigQuery**. This facilitated the effective integration of raw LCL energy pings with external weather data sourced from **Visual Crossing**. 
-* **Temporal Alignment:** Addressed the frequency discrepancy between hourly weather data and 30-minute energy pings by utilizing **Linear Interpolation** in the cloud environment, ensuring a continuous and high-fidelity feature matrix. 
-* **Cloud Export Pipeline:** The final refined dataset was exported as `lcl_merged_data.csv`, marking the transition of the project from an intensive cloud-engineering phase to a local, high-performance modeling pipeline.
+## Technical Stack
 
-### 2. Data Integrity & Preprocessing
-Following the cloud export, rigorous protocols were implemented to guarantee the validity of the model:
+- Google Cloud Platform (BigQuery, Compute Engine)
+- Python 3.9+ (scikit-learn, pandas, numpy)
+- Dataset: London Smart Meter (167M records, 30-minute intervals)
+- Weather API: Visual Crossing (temperature, humidity)
 
-* **Leakage Prevention:** The implementation of rigorously enforced temporal splitting (80/20) and **T+48** target shifting guarantees that the model does not have access to future information during the training process. 
-* **Anomalies:** Sensor errors and absent values were addressed using time-sensitive interpolation.
+## Architecture
 
-### 3. Feature Engineering (The "Physics" of the Grid) 
-Instead of depending exclusively on unprocessed data, I developed features that reflect the physical patterns of a city:
+### Data Engineering Pipeline
 
-* **Fourier Series Harmonics:** Illustrated the 24-hour cyclical "pulse" of energy demand as a combination of sine and cosine waves. 
-* **Centered Interactions:** Analyzed the correlation between Temperature and Hour-of-Day to account for fluctuating weather effects. 
-* **Temporal Lags:** Employed short-term (30m) and long-term (24h) dependencies to ground the model in historical data.
+**Infrastructure Orchestration:** Google Compute Engine VM instance manages data movement and executes processing scripts in the cloud.
 
----
+**Distributed SQL Transformation:** High-efficiency joins and temporal aggregations performed directly in Google BigQuery, integrating 167M raw energy records with external weather data.
 
-###  The Modeling Journey
+**Temporal Alignment:** Linear interpolation resolves frequency mismatch between hourly weather data and 30-minute energy readings, ensuring continuous feature matrix.
 
-| Phase | Model | Improvement | Audit Note |
-| :--- | :--- | :--- | :--- |
-| **Baseline** | Naive Persistence | 0.00% | Positioned at $RMSE = 0.0358$ |
-| **Phase 1** | Elastic Net (Linear) | 7.52% | Reach the "Linear Ceiling"; faced challenges with peaks |
-| **Phase 2** | GBR (Ensemble) | **14.52%** | Captured non-linear partitions and high-variance states |
+**Export:** Final dataset (lcl_merged_data.csv) transitions from cloud engineering to local modeling.
 
----
+### Feature Engineering
 
-## Trustworthy AI & Diagnostics 
-To guarantee the dependability of the "Black Box" ensemble, I performed a systematic diagnostic audit:
+**Fourier Series Harmonics:** Sine and cosine waves capture 24-hour cyclical patterns of energy demand.
 
-* **Residual Analysis:** Detected heteroscedasticity (referred to as the "Fan Shape") during the linear phase, which served as the scientific basis for transitioning to non-linear modeling. 
-* **ACF Audit:** Confirmed that the **Lag-48 (24-hour) spike** in error autocorrelation was significantly diminished, demonstrating that the model had "exhausted" the available temporal information. 
-* **Permutation Importance:** Investigated the GBR to validate that significant features such as `fourier_cos_1` and `lag_30m` were influencing predictions, rather than random noise.
+**Temporal Lags:** Short-term (30m) and long-term (24h) dependencies ground model in historical data.
 
----
+**Weather Interactions:** Temperature-hour coupling (temp × hour, temp × sin(hour)) accounts for time-varying weather effects.
 
-## Repository Structure
-```text
-├── data_engineering/  # BigQuery SQL and Dataset Merging scripts
-├── features/       # Temporal and Fourier engineering modules
-├── models/         # Elastic Net and HistGradientBoosting implementations
-├── results/        # Final audit tables (final_model_comparison.csv) and diagnostics
-└── main.py         # The unified research pipeline
+**Cyclical Encoding:** Hour, day, month encoded as sine/cosine transformations to preserve temporal continuity.
+
+**Rolling Statistics:** 4-hour moving averages and standard deviations capture short-term trends.
+
+### Modeling
+
+**Baselines:** Naive Persistence, Seasonal Naive
+
+**Linear Models:** Elastic Net (primary), Ridge, Lasso
+
+**Ensemble:** Gradient Boosting Regressor (HistGradientBoosting)
+
+**Training Protocol:** 80/20 temporal split, T+48h forecast target, strict chronological ordering to prevent leakage.
+
+## Key Findings
+
+**Lag Structure Sensitivity:** Comparison between configurations reveals critical importance of short-term temporal dependencies. Initial configuration (lag_30m, lag_24h) achieved 7.52% linear improvement, while current configuration (lag_48h, lag_96h) degraded to -1.72%, demonstrating that 30-minute lags capture essential intra-day autocorrelation patterns.
+
+**Ensemble Performance:** Gradient Boosting consistently outperformed linear models across both configurations (14.52% initial, 9.56% current), indicating non-linear methods better handle peak-hour demand variability.
+
+**Feature Importance:** Top predictors are fourier_cos_1 (24-hour cycle), lag_30m (short-term autocorrelation), and temp_hour_interaction (weather-time coupling).
+
+**Diagnostic Insights:** ACF analysis confirmed 24-hour cycle. Residual analysis revealed significant heteroscedasticity with peak-hour RMSE (0.0444) nearly 3x higher than night hours (0.0153).
+
+### Research Finding
+
+Current lag structure (lag_48h, lag_96h) resulted in linear model degradation compared to baseline. This demonstrates that energy forecasting requires short-term temporal dependencies (30-minute lags) to capture intra-day consumption dynamics. Future work will test optimal lag combinations through systematic ablation studies.
+
+## Installation
+
+```bash
+git clone https://github.com/bcode0127-debug/Energy_Forecasting_Project.git
+cd energy-forecasting
+pip install -r requirements.txt
+```
+
+## Usage
+
+```bash
+python main.py
+```
+
+Outputs:
+- results/final_model_comparison.csv
+- results/figures/ (diagnostic plots)
+
+## Project Structure
+
+```
+├── data_engineering/       # BigQuery SQL scripts
+├── features/              # Temporal and Fourier features
+├── models/                # Elastic Net, Gradient Boosting
+├── evaluation/            # Diagnostics and metrics
+├── results/               # Output tables and figures
+└── main.py                # Pipeline
+```
+
+## Future Research Directions
+
+**Ablation Studies:** Systematic removal of feature groups (weather, Fourier terms, lags) to quantify individual contributions.
+
+**Heteroscedasticity Mitigation:** Weighted Least Squares or segment-specific models (night/day/peak hours).
+
+**Uncertainty Quantification:** Prediction intervals via conformal prediction or quantile regression.
+
+**Multi-Horizon Forecasting:** Extend to 7-day ahead predictions.
+
+**Temporal Drift Detection:** Monitor model performance across seasons and trigger adaptive retraining.
+
+## License
+
+MIT License - see LICENSE file
+

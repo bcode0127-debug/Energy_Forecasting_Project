@@ -2,15 +2,16 @@ import pandas as pd
 
 def clean_and_interpolation(df):
 
-    # enfore 30-min frequency
+    # Enforce strict 30-minute periodicity to ensure temporal continuity
     df = df.asfreq('30min')
 
-    # Linear interpolation
+    # Synthesize missing intervals via linear interpolation 
+    # This aligns hourly weather data with 30-minute energy pings
     df['mean_consumption'] = df['mean_consumption'].interpolate(method='linear')
     df['temp'] = df['temp'].interpolate(method='linear')
     df['humidity'] = df['humidity'].interpolate(method='linear')
 
-    # final cleanup
+    # Impute boundary values to ensure a zero-null feature matrix
     df = df.ffill().bfill()
 
     return df
