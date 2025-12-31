@@ -1,4 +1,4 @@
 Model Type,RMSE,Improvement (%),Trust Status
-Naive Baseline,0.03589280306653365,0.0,Low (Bias)
-Elastic Net (Linear),0.033194,7.52,Medium (Interpretability)
-GBR (Ensemble),0.030681,14.52,High (Accuracy)
+Naive Baseline,0.035895255726758266,0.0,Low (Bias)
+Elastic Net (Linear),0.03651303610791145,-1.7210641591631197,Medium (Interpretability)
+GBR (Ensemble),0.03246303737369512,9.561760415331399,High (Accuracy)
