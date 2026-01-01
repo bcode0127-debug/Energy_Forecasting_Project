@@ -1,4 +1,7 @@
 Model Type,RMSE,Improvement (%),Trust Status
 Naive Baseline,0.035895255726758266,0.0,Low (Bias)
-Elastic Net (Linear),0.03651303610791145,-1.7210641591631197,Medium (Interpretability)
+OLS (Linear),0.03663181663051719,-2.051972855036254,Medium (Unregularized)
+Elastic Net (Linear),0.03651303610791145,-1.7210641591631197,Medium (Regularized)
+Huber (Robust),0.036823541696379136,-2.5860965490458283,Medium (Outlier-Robust)
+WLS (Weighted),0.03844638476487191,-7.107148246925273,Medium (Variance-Weighted)
 GBR (Ensemble),0.03246303737369512,9.561760415331399,High (Accuracy)
