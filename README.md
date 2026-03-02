@@ -10,7 +10,10 @@ This question is critical for grid operators who require explainable predictions
 
 ## 2. Abstract
 
-This work presents a systematic evaluation of linear regression variants and ensemble methods for short-term energy consumption forecasting using 167 million smart meter records from the London Grid. Through cloud-native data engineering on Google Cloud Platform and rigorous feature engineering, demonstrate that linear models achieve competitive performance (7-8% improvement) only with properly configured short-term temporal lags. However, ensemble methods consistently outperform linear approaches by 7-8 percentage points, indicating fundamental non-linearities in peak-hour energy consumption patterns.
+This work presents a systematic evaluation om linear regression variants and ensemble methods for energy 
+forecasting using 167M smart meter records from London Grid. Despite optimal feature engineering on GCP, linear models achieve only 8% improvement over baseline, while gradient boosting reaches 15%—a 7-point 
+gap representing the cost of interpretability. Linear models experience 10% performance swings based on lag configuration and fail to address heteroscedasticity (2.9x variance during peak hours), indicating 
+structural non-linearities. We propose a hybrid deployment strategy: linear models for off-peak (sufficient accuracy, regulatory compliance) and ensembles for peak hours (critical accuracy).
 
 ## 3. Key Findings
 
@@ -20,7 +23,7 @@ Linear models experience a 10% performance swing based on lag configuration. Mod
 
 **Finding 2: Linear Models Hit a Performance Ceiling**
 
-Even with optimal feature engineering, linear models (OLS, ElasticNet, Huber) achieve approximately 8% improvement, compared to 15% for gradient boosting ensembles. This 7-8 percentage point gap represents the cost of interpretability.
+Even with optimal feature engineering, linear models (OLS, ElasticNet, Huber) achieve approximately 8% improvement, compared to 15% for gradient boosting ensembles. This 7 percentage point gap represents the cost of interpretability.
 
 **Finding 3: Heteroscedasticity Persists Across All Linear Approaches**
 
@@ -47,9 +50,7 @@ Gradient Boosting shows only 6% performance degradation with suboptimal lags, co
 
 The optimal lag configuration (30 min/ 24 h) enables linear models to capture short-term autocorrelation and daily seasonality, delivering modest gains. 
 
-
 The same models falter with longer lags because they miss immediate temporal dependencies. GBR remains positive under both configurations, confirming its ability to learn non linear relationships.
-
 
 
 ## 5. Technical Infrastructure
